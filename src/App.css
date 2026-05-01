@@ -1090,3 +1090,30 @@ tbody td {
   gap: 8px;
   margin-top: 12px;
 }
+
+.pipeline-card-title {
+  display: inline-block;
+  color: #111827;
+  font-size: 1rem;
+  font-weight: 800;
+  text-decoration: none;
+  margin-bottom: 4px;
+}
+
+.pipeline-card-title:hover {
+  color: #5b21b6;
+  text-decoration: underline;
+}
+
+.campaign-name-link {
+  display: inline-block;
+  margin: 12px 0;
+  font-weight: 800;
+  color: #4f46e5;
+  text-decoration: none;
+}
+
+.campaign-name-link:hover {
+  color: #5b21b6;
+  text-decoration: underline;
+}

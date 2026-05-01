@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { getInfluencers } from '../services/influencerService'
 import { getCampaigns } from '../services/campaignService'
+import { Link } from 'react-router-dom'
 import {
     addOutreachNote,
     createOutreachRecord,
@@ -237,7 +238,17 @@ function Pipeline() {
                                             <div key={record.id} className="pipeline-card">
                                                 <div className="pipeline-card-top">
                                                     <div>
-                                                        <h3>{record.influencers?.name || 'Unknown Influencer'}</h3>
+                                                        {record.influencers?.id ? (
+                                                            <Link
+                                                                to={`/influencers/${record.influencers.id}`}
+                                                                className="pipeline-card-title"
+                                                            >
+                                                                {record.influencers.name}
+                                                            </Link>
+                                                        ) : (
+                                                            <h3>Unknown Influencer</h3>
+                                                        )}
+
                                                         <p className="muted">
                                                             {record.influencers?.platform || 'Platform'} ·{' '}
                                                             {record.influencers?.handle || 'No handle'}
@@ -247,9 +258,16 @@ function Pipeline() {
                                                     <span className="status-pill">{record.status}</span>
                                                 </div>
 
-                                                <p className="campaign-name">
-                                                    {record.campaigns?.name || 'No campaign'}
-                                                </p>
+                                                {record.campaigns?.id ? (
+                                                    <Link
+                                                        to={`/campaigns/${record.campaigns.id}`}
+                                                        className="campaign-name-link"
+                                                    >
+                                                        {record.campaigns.name}
+                                                    </Link>
+                                                ) : (
+                                                    <p className="campaign-name">No campaign</p>
+                                                )}
 
                                                 <div className="note-section">
                                                     <label>Add Note</label>
