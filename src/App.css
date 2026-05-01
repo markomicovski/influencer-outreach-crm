@@ -1034,3 +1034,40 @@ tbody td {
     grid-template-columns: 1fr;
   }
 }
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.secondary-button {
+  border: none;
+  background: #eef2ff;
+  color: #3730a3;
+  padding: 8px 11px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.secondary-button:hover {
+  background: #e0e7ff;
+}
+
+.edit-page-card {
+  max-width: 720px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.compact-link-button {
+  padding: 8px 11px;
+  font-size: 0.85rem;
+}

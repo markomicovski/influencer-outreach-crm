@@ -11,6 +11,7 @@ function Influencers() {
     const [influencers, setInfluencers] = useState([])
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
+    const [editingId, setEditingId] = useState(null)
     const [error, setError] = useState('')
 
     const [searchTerm, setSearchTerm] = useState('')
@@ -59,10 +60,11 @@ function Influencers() {
             setSaving(true)
             setError('')
 
-            await createInfluencer({
+            const influencerPayload = {
                 ...form,
                 follower_count: Number(form.follower_count),
-            })
+            }
+
 
             setForm({
                 name: '',
@@ -77,7 +79,7 @@ function Influencers() {
             await loadInfluencers()
         } catch (err) {
             console.error(err)
-            setError(err.message || 'Could not create influencer.')
+            setError(err.message || 'Could not save influencer.')
         } finally {
             setSaving(false)
         }
@@ -92,6 +94,7 @@ function Influencers() {
             setError(err.message || 'Could not delete influencer.')
         }
     }
+
 
     const filteredInfluencers = influencers.filter((influencer) => {
         const search = searchTerm.toLowerCase()
@@ -121,7 +124,7 @@ function Influencers() {
 
             <div className="grid-two">
                 <section className="card">
-                    <h2>Add Influencer</h2>
+                    <h2>{editingId ? 'Edit Influencer' : 'Add Influencer'}</h2>
 
                     <form onSubmit={handleSubmit} className="form">
                         <label>Name</label>
@@ -196,8 +199,22 @@ function Influencers() {
                         {error && <p className="error">{error}</p>}
 
                         <button type="submit" disabled={saving}>
-                            {saving ? 'Saving...' : 'Add Influencer'}
+                            {saving
+                                ? 'Saving...'
+                                : editingId
+                                    ? 'Save Changes'
+                                    : 'Add Influencer'}
                         </button>
+
+                        {editingId && (
+                            <button
+                                type="button"
+                                className="secondary-button"
+                                onClick={handleCancelEdit}
+                            >
+                                Cancel Edit
+                            </button>
+                        )}
                     </form>
                 </section>
 
@@ -261,12 +278,22 @@ function Influencers() {
                                             <td>{influencer.follower_count?.toLocaleString()}</td>
                                             <td>{influencer.niche}</td>
                                             <td>
-                                                <button
-                                                    className="danger-button"
-                                                    onClick={() => handleDelete(influencer.id)}
-                                                >
-                                                    Delete
-                                                </button>
+                                                <div className="action-buttons">
+                                                    <Link
+                                                        to={`/influencers/${influencer.id}/edit`}
+                                                        className="secondary-link-button compact-link-button"
+                                                    >
+                                                        Edit
+                                                    </Link>
+
+                                                    <button
+                                                        type="button"
+                                                        className="danger-button"
+                                                        onClick={() => handleDelete(influencer.id)}
+                                                    >
+                                                        Delete
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     ))}

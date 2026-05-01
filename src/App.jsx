@@ -8,6 +8,7 @@ import AdminDashboard from './pages/AdminDashboard'
 import Navbar from './components/Navbar'
 import ProtectedRoute from './components/ProtectedRoute'
 import InfluencerProfile from './pages/InfluencerProfile'
+import EditInfluencer from './pages/EditInfluencer'
 import './App.css'
 
 function App() {
@@ -44,6 +45,15 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={['BRAND_MANAGER']}>
                   <InfluencerProfile />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/influencers/:id/edit"
+              element={
+                <ProtectedRoute allowedRoles={['BRAND_MANAGER']}>
+                  <EditInfluencer />
                 </ProtectedRoute>
               }
             />
