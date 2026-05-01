@@ -564,3 +564,207 @@ tbody td {
 .placeholder-page .muted {
   max-width: 380px;
 }
+
+.pipeline-create-card {
+  margin-bottom: 24px;
+}
+
+.pipeline-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 16px;
+  align-items: end;
+}
+
+.pipeline-form div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pipeline-form label,
+.note-section label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #374151;
+}
+
+.pipeline-form select,
+.note-section textarea {
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 11px 12px;
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+.pipeline-form button,
+.primary-button {
+  border: none;
+  background: #7c3aed;
+  color: white;
+  padding: 11px 14px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.pipeline-form button:hover,
+.primary-button:hover {
+  background: #6d28d9;
+}
+
+.pipeline-form button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.pipeline-board {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(240px, 1fr));
+  gap: 18px;
+  align-items: start;
+}
+
+.pipeline-column {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  padding: 14px;
+  min-height: 420px;
+}
+
+.pipeline-column-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.pipeline-column-header h2 {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #111827;
+}
+
+.pipeline-column-header span {
+  background: white;
+  border: 1px solid #e5e7eb;
+  color: #6b7280;
+  font-weight: 800;
+  border-radius: 999px;
+  padding: 4px 9px;
+  font-size: 0.8rem;
+}
+
+.pipeline-cards {
+  display: grid;
+  gap: 14px;
+}
+
+.pipeline-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
+}
+
+.pipeline-card-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.pipeline-card h3 {
+  margin: 0 0 4px;
+  font-size: 1rem;
+  color: #111827;
+}
+
+.campaign-name {
+  margin: 12px 0;
+  font-weight: 700;
+  color: #4f46e5;
+}
+
+.note-section {
+  display: grid;
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.note-section textarea {
+  resize: vertical;
+  min-height: 64px;
+}
+
+.secondary-button {
+  border: none;
+  background: #eef2ff;
+  color: #3730a3;
+  padding: 9px 11px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.secondary-button:hover {
+  background: #e0e7ff;
+}
+
+.recent-notes {
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 10px;
+  margin-bottom: 14px;
+}
+
+.recent-notes strong {
+  font-size: 0.85rem;
+  color: #374151;
+}
+
+.recent-notes ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+}
+
+.recent-notes li {
+  font-size: 0.85rem;
+  margin-bottom: 4px;
+  color: #4b5563;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.complete-text {
+  color: #15803d;
+  font-weight: 800;
+  text-align: center;
+}
+
+.empty-column {
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 18px 0;
+}
+
+@media (max-width: 1200px) {
+  .pipeline-board {
+    grid-template-columns: repeat(2, minmax(240px, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .pipeline-form {
+    grid-template-columns: 1fr;
+  }
+
+  .pipeline-board {
+    grid-template-columns: 1fr;
+  }
+}
