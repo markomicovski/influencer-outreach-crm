@@ -7,6 +7,7 @@ import Pipeline from './pages/Pipeline'
 import AdminDashboard from './pages/AdminDashboard'
 import Navbar from './components/Navbar'
 import ProtectedRoute from './components/ProtectedRoute'
+import InfluencerProfile from './pages/InfluencerProfile'
 import './App.css'
 
 function App() {
@@ -34,6 +35,15 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={['BRAND_MANAGER']}>
                   <Influencers />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/influencers/:id"
+              element={
+                <ProtectedRoute allowedRoles={['BRAND_MANAGER']}>
+                  <InfluencerProfile />
                 </ProtectedRoute>
               }
             />

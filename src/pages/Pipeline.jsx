@@ -1,10 +1,17 @@
 function Pipeline() {
-    return (
-        <div>
-        <h1>Pipeline</h1>
-        <p>Welcome to the pipeline page! Here you can manage your sales pipeline and track deals.</p>
-        </div>
-    )
-    }
+  return (
+    <div>
+      <div className="page-header">
+        <h1>Outreach Pipeline</h1>
+        <p className="muted">Track influencer outreach stages from first contact to confirmed partnership.</p>
+      </div>
+
+      <div className="placeholder-page">
+        <h2>Pipeline coming soon</h2>
+        <p className="muted">More to come.</p>
+      </div>
+    </div>
+  )
+}
 
 export default Pipeline
