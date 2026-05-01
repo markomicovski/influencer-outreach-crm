@@ -1,21 +1,33 @@
-import { useEffect } from 'react'
-import { supabase } from './services/supabaseClient'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import Login from './pages/Login'
+import BrandDashboard from './pages/BrandDashboard'
+import Influencers from './pages/Influencers'
+import Campaigns from './pages/Campaigns'
+import Pipeline from './pages/Pipeline'
+import AdminDashboard from './pages/AdminDashboard'
+import Navbar from './components/Navbar'
+import './App.css'
 
 function App() {
-  useEffect(() => {
-    async function testConnection() {
-      const { data, error } = await supabase
-        .from('influencers')
-        .select('*')
+  return (
+    <BrowserRouter>
+      <div className="app">
+        <Navbar />
 
-      console.log('Supabase data:', data)
-      console.log('Supabase error:', error)
-    }
-
-    testConnection()
-  }, [])
-
-  return <h1>Influencer CRM</h1>
+        <main className="main-content">
+          <Routes>
+            <Route path="/" element={<Navigate to="/login" />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/dashboard" element={<BrandDashboard />} />
+            <Route path="/influencers" element={<Influencers />} />
+            <Route path="/campaigns" element={<Campaigns />} />
+            <Route path="/pipeline" element={<Pipeline />} />
+            <Route path="/admin" element={<AdminDashboard />} />
+          </Routes>
+        </main>
+      </div>
+    </BrowserRouter>
+  )
 }
 
 export default App
