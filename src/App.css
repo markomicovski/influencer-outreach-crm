@@ -1071,3 +1071,16 @@ tbody td {
   padding: 8px 11px;
   font-size: 0.85rem;
 }
+
+.campaign-profile-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+@media (max-width: 700px) {
+  .campaign-profile-row {
+    flex-direction: column;
+  }
+}

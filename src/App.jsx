@@ -2,13 +2,15 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Login from './pages/Login'
 import BrandDashboard from './pages/BrandDashboard'
 import Influencers from './pages/Influencers'
+import InfluencerProfile from './pages/InfluencerProfile'
+import EditInfluencer from './pages/EditInfluencer'
 import Campaigns from './pages/Campaigns'
+import CampaignProfile from './pages/CampaignProfile'
+import EditCampaign from './pages/EditCampaign'
 import Pipeline from './pages/Pipeline'
 import AdminDashboard from './pages/AdminDashboard'
 import Navbar from './components/Navbar'
 import ProtectedRoute from './components/ProtectedRoute'
-import InfluencerProfile from './pages/InfluencerProfile'
-import EditInfluencer from './pages/EditInfluencer'
 import './App.css'
 
 function App() {
@@ -63,6 +65,24 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={['BRAND_MANAGER']}>
                   <Campaigns />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/campaigns/:id/edit"
+              element={
+                <ProtectedRoute allowedRoles={['BRAND_MANAGER']}>
+                  <EditCampaign />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/campaigns/:id"
+              element={
+                <ProtectedRoute allowedRoles={['BRAND_MANAGER']}>
+                  <CampaignProfile />
                 </ProtectedRoute>
               }
             />
