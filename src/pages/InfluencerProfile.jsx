@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { supabase } from '../services/supabaseClient'
+import { getCampaigns } from '../services/campaignService'
+import {
+    createOutreachRecord,
+    deleteOutreachRecord,
+} from '../services/outreachService'
 
 function InfluencerProfile() {
     const { id } = useParams()
@@ -8,6 +13,26 @@ function InfluencerProfile() {
     const [outreachRecords, setOutreachRecords] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
+
+    const [campaigns, setCampaigns] = useState([])
+    const [selectedCampaignId, setSelectedCampaignId] = useState('')
+    const [assigning, setAssigning] = useState(false)
+
+    async function loadOutreachRecords() {
+        const { data: outreachData, error: outreachError } = await supabase
+            .from('outreach')
+            .select(`
+                *,
+                campaigns (*),
+                notes (*)
+            `)
+            .eq('influencer_id', id)
+            .order('created_at', { ascending: false })
+
+        if (outreachError) throw outreachError
+
+        setOutreachRecords(outreachData || [])
+    }
 
     useEffect(() => {
         async function loadInfluencerProfile() {
@@ -23,20 +48,12 @@ function InfluencerProfile() {
 
                 if (influencerError) throw influencerError
 
-                const { data: outreachData, error: outreachError } = await supabase
-                    .from('outreach')
-                    .select(`
-            *,
-            campaigns (*),
-            notes (*)
-          `)
-                    .eq('influencer_id', id)
-                    .order('created_at', { ascending: false })
-
-                if (outreachError) throw outreachError
+                const campaignData = await getCampaigns()
 
                 setInfluencer(influencerData)
-                setOutreachRecords(outreachData || [])
+                setCampaigns(campaignData || [])
+
+                await loadOutreachRecords()
             } catch (err) {
                 console.error(err)
                 setError(err.message || 'Could not load influencer profile.')
@@ -47,6 +64,63 @@ function InfluencerProfile() {
 
         loadInfluencerProfile()
     }, [id])
+
+    async function handleAssignToCampaign(e) {
+        e.preventDefault()
+
+        if (!selectedCampaignId) {
+            setError('Please select a campaign first.')
+            return
+        }
+
+        const alreadyAssigned = outreachRecords.some(
+            (record) => record.campaign_id === selectedCampaignId
+        )
+
+        if (alreadyAssigned) {
+            setError('This influencer is already assigned to that campaign.')
+            return
+        }
+
+        try {
+            setAssigning(true)
+            setError('')
+
+            await createOutreachRecord({
+                influencer_id: id,
+                campaign_id: selectedCampaignId,
+            })
+
+            setSelectedCampaignId('')
+            await loadOutreachRecords()
+        } catch (err) {
+            console.error(err)
+            setError(err.message || 'Could not assign influencer to campaign.')
+        } finally {
+            setAssigning(false)
+        }
+    }
+
+    async function handleRemoveFromCampaign(outreachId) {
+        const confirmed = window.confirm(
+            'Are you sure you want to remove this influencer from the campaign?'
+        )
+
+        if (!confirmed) return
+
+        try {
+            setError('')
+
+            await deleteOutreachRecord(outreachId)
+
+            setOutreachRecords((current) =>
+                current.filter((record) => record.id !== outreachId)
+            )
+        } catch (err) {
+            console.error(err)
+            setError(err.message || 'Could not remove influencer from campaign.')
+        }
+    }
 
     if (loading) return <p>Loading influencer profile...</p>
     if (error) return <p className="error">{error}</p>
@@ -62,7 +136,7 @@ function InfluencerProfile() {
 
                     <h1>{influencer.name}</h1>
                     <p className="muted">
-                        {influencer.platform} influencer profile and outreach history.
+                        {influencer.platform} influencer profile, campaign assignments, and outreach history.
                     </p>
                 </div>
 
@@ -120,36 +194,102 @@ function InfluencerProfile() {
                     </div>
                 </section>
 
-                <section className="card">
-                    <h2>Outreach History</h2>
-
-                    {outreachRecords.length === 0 ? (
+                <div className="profile-main-column">
+                    <section className="card assign-card">
+                        <h2>Assign to Campaign</h2>
                         <p className="muted">
-                            This influencer has not been assigned to any campaigns yet.
+                            Start a new outreach record for this influencer in a selected campaign.
                         </p>
-                    ) : (
-                        <div className="history-list">
-                            {outreachRecords.map((record) => (
-                                <div key={record.id} className="history-item">
-                                    <div>
-                                        <strong>{record.campaigns?.name || 'Campaign'}</strong>
-                                        <p className="muted">
-                                            Status: <span className="status-pill">{record.status}</span>
-                                        </p>
-                                    </div>
 
-                                    {record.notes?.length > 0 && (
-                                        <ul>
-                                            {record.notes.map((note) => (
-                                                <li key={note.id}>{note.content}</li>
-                                            ))}
-                                        </ul>
-                                    )}
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </section>
+                        <form onSubmit={handleAssignToCampaign} className="assign-form">
+                            <select
+                                value={selectedCampaignId}
+                                onChange={(e) => setSelectedCampaignId(e.target.value)}
+                            >
+                                <option value="">Select campaign</option>
+                                {campaigns.map((campaign) => (
+                                    <option key={campaign.id} value={campaign.id}>
+                                        {campaign.name} ({campaign.status})
+                                    </option>
+                                ))}
+                            </select>
+
+                            <button type="submit" disabled={assigning}>
+                                {assigning ? 'Assigning...' : 'Assign to Campaign'}
+                            </button>
+                        </form>
+                    </section>
+
+                    <section className="card">
+                        <h2>Campaigns</h2>
+                        <p className="muted">
+                            Campaigns this influencer is assigned to, including outreach status and interaction notes.
+                        </p>
+
+                        {outreachRecords.length === 0 ? (
+                            <p className="muted">
+                                This influencer has not been assigned to any campaigns yet.
+                            </p>
+                        ) : (
+                            <div className="campaign-assignment-list">
+                                {outreachRecords.map((record) => (
+                                    <div key={record.id} className="campaign-assignment-card">
+                                        <div className="campaign-assignment-header">
+                                            <div>
+                                                {record.campaigns?.id ? (
+                                                    <Link
+                                                        to={`/campaigns/${record.campaigns.id}`}
+                                                        className="campaign-assignment-title"
+                                                    >
+                                                        {record.campaigns.name}
+                                                    </Link>
+                                                ) : (
+                                                    <strong>Campaign</strong>
+                                                )}
+
+                                                <p className="muted">
+                                                    Current outreach status:{' '}
+                                                    <span className="status-pill">{record.status}</span>
+                                                </p>
+                                            </div>
+
+                                            <button
+                                                type="button"
+                                                className="danger-button"
+                                                onClick={() => handleRemoveFromCampaign(record.id)}
+                                            >
+                                                Remove
+                                            </button>
+                                        </div>
+
+                                        {record.notes?.length > 0 ? (
+                                            <div className="campaign-notes-block">
+                                                <strong>Interaction Notes</strong>
+
+                                                <ul>
+                                                    {record.notes.map((note) => (
+                                                        <li key={note.id}>
+                                                            <p>{note.content}</p>
+                                                            <span>
+                                                                {note.created_at
+                                                                    ? new Date(note.created_at).toLocaleString()
+                                                                    : 'No date'}
+                                                            </span>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        ) : (
+                                            <p className="muted no-notes-text">
+                                                No notes have been added for this campaign yet.
+                                            </p>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </section>
+                </div>
             </div>
         </div>
     )

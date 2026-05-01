@@ -6,12 +6,10 @@ import {
     getInfluencers,
 } from '../services/influencerService'
 
-
 function Influencers() {
     const [influencers, setInfluencers] = useState([])
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
-    const [editingId, setEditingId] = useState(null)
     const [error, setError] = useState('')
 
     const [searchTerm, setSearchTerm] = useState('')
@@ -31,6 +29,7 @@ function Influencers() {
         try {
             setLoading(true)
             setError('')
+
             const data = await getInfluencers()
             setInfluencers(data)
         } catch (err) {
@@ -47,6 +46,7 @@ function Influencers() {
 
     function handleChange(e) {
         const { name, value } = e.target
+
         setForm((current) => ({
             ...current,
             [name]: value,
@@ -60,11 +60,10 @@ function Influencers() {
             setSaving(true)
             setError('')
 
-            const influencerPayload = {
+            await createInfluencer({
                 ...form,
                 follower_count: Number(form.follower_count),
-            }
-
+            })
 
             setForm({
                 name: '',
@@ -91,7 +90,9 @@ function Influencers() {
         )
 
         if (!confirmed) return
+
         try {
+            setError('')
             await deleteInfluencer(id)
             await loadInfluencers()
         } catch (err) {
@@ -99,7 +100,6 @@ function Influencers() {
             setError(err.message || 'Could not delete influencer.')
         }
     }
-
 
     const filteredInfluencers = influencers.filter((influencer) => {
         const search = searchTerm.toLowerCase()
@@ -122,14 +122,14 @@ function Influencers() {
                 <div>
                     <h1>Influencer Management</h1>
                     <p className="muted">
-                        Add, view, and manage influencer profiles for outreach campaigns.
+                        Add, view, search, and manage influencer profiles for outreach campaigns.
                     </p>
                 </div>
             </div>
 
             <div className="grid-two">
                 <section className="card">
-                    <h2>{editingId ? 'Edit Influencer' : 'Add Influencer'}</h2>
+                    <h2>Add Influencer</h2>
 
                     <form onSubmit={handleSubmit} className="form">
                         <label>Name</label>
@@ -204,27 +204,22 @@ function Influencers() {
                         {error && <p className="error">{error}</p>}
 
                         <button type="submit" disabled={saving}>
-                            {saving
-                                ? 'Saving...'
-                                : editingId
-                                    ? 'Save Changes'
-                                    : 'Add Influencer'}
+                            {saving ? 'Saving...' : 'Add Influencer'}
                         </button>
-
-                        {editingId && (
-                            <button
-                                type="button"
-                                className="secondary-button"
-                                onClick={handleCancelEdit}
-                            >
-                                Cancel Edit
-                            </button>
-                        )}
                     </form>
                 </section>
 
                 <section className="card">
-                    <h2>Influencer List</h2>
+                    <div className="section-header">
+                        <div>
+                            <h2>Influencer List</h2>
+                            <p className="muted">
+                                {influencers.length} total influencer
+                                {influencers.length === 1 ? '' : 's'} in the CRM.
+                            </p>
+                        </div>
+                    </div>
+
                     <div className="filter-row">
                         <input
                             type="text"
@@ -250,9 +245,13 @@ function Influencers() {
                     {loading ? (
                         <p>Loading influencers...</p>
                     ) : influencers.length === 0 ? (
-                        <p className="muted">No influencers have been added yet.</p>
+                        <p className="muted">
+                            No influencers have been added yet. Add your first influencer to begin building your outreach list.
+                        </p>
                     ) : filteredInfluencers.length === 0 ? (
-                        <p className="muted">No influencers match your current search or filter.</p>
+                        <p className="muted">
+                            No influencers match your current search or filter.
+                        </p>
                     ) : (
                         <div className="table-wrap">
                             <table>
@@ -263,25 +262,40 @@ function Influencers() {
                                         <th>Handle</th>
                                         <th>Followers</th>
                                         <th>Niche</th>
-                                        <th></th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
+
                                 <tbody>
                                     {filteredInfluencers.map((influencer) => (
                                         <tr key={influencer.id}>
                                             <td>
-                                                <Link to={`/influencers/${influencer.id}`} className="table-link">
+                                                <Link
+                                                    to={`/influencers/${influencer.id}`}
+                                                    className="table-link"
+                                                >
                                                     {influencer.name}
                                                 </Link>
                                             </td>
+
                                             <td>
-                                                <span className={`platform-badge ${influencer.platform.toLowerCase()}`}>
+                                                <span
+                                                    className={`platform-badge ${influencer.platform?.toLowerCase()}`}
+                                                >
                                                     {influencer.platform}
                                                 </span>
                                             </td>
+
                                             <td>{influencer.handle}</td>
-                                            <td>{influencer.follower_count?.toLocaleString()}</td>
-                                            <td>{influencer.niche}</td>
+
+                                            <td>
+                                                {influencer.follower_count
+                                                    ? influencer.follower_count.toLocaleString()
+                                                    : '—'}
+                                            </td>
+
+                                            <td>{influencer.niche || '—'}</td>
+
                                             <td>
                                                 <div className="action-buttons">
                                                     <Link

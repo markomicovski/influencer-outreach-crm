@@ -1,51 +1,80 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@1&family=Nunito:wght@400;500;600;700&display=swap');
 
 *, *::before, *::after {
   box-sizing: border-box;
 }
 
 :root {
-  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  font-size: 15px;
+  --bg:               #f7f5ff;
+  --surface:          #ffffff;
+  --border-color:     #ede9fc;
+  --text:             #2d2741;
+  --text-muted:       #b5aed8;
+  --text-section:     #c4bfe0;
+  --accent:           #6c5ce7;
+  --accent-hover:     #5a4bd1;
+  --accent-light:     #ede9fc;
+  --danger:           #d04040;
+  --danger-bg:        #fff0f0;
+  --danger-border:    #ffd4d4;
+
+  --sidebar-bg:           #6c5ce7;
+  --sidebar-text-active:  #ffffff;
+  --sidebar-text-inactive: rgba(255, 255, 255, 0.55);
+  --sidebar-active-bg:    rgba(255, 255, 255, 0.15);
+  --sidebar-width:        195px;
+
+  --radius-card:  14px;
+  --radius-btn:   10px;
+  --radius-pill:  20px;
+  --radius-nav:   10px;
+
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-size: 13px;
   line-height: 1.5;
-  color: #374151;
+  color: var(--text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
 }
 
 body {
   margin: 0;
-  background: #f6f5ff;
+  background: var(--bg);
 }
 
 #root {
   min-height: 100vh;
-  width: 100%;
-  max-width: 100%;
-  margin: 0;
-  border: none;
-  text-align: left;
-  display: flex;
-  flex-direction: column;
 }
 
-h1, h2, h3, h4 {
-  font-family: 'Inter', system-ui, sans-serif;
-  font-weight: 600;
-  color: #1e1b4b;
+h1 {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 22px;
+  color: var(--text);
   margin: 0;
-  letter-spacing: -0.3px;
 }
 
-h1 { font-size: 1.75rem; }
-h2 { font-size: 1.0625rem; }
-h3 { font-size: 0.9375rem; }
+h2, h3, h4, h5, h6 {
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--text);
+  margin: 0;
+}
 
-p { margin: 0; }
+p {
+  margin: 0;
+}
 
 a {
-  color: #7c3aed;
+  color: var(--accent);
   text-decoration: none;
+}
+
+button, input, select, textarea {
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-size: 13px;
+  color: var(--text);
 }

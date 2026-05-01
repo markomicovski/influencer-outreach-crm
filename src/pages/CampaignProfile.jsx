@@ -1,41 +1,54 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import {
+    deleteCampaign,
     getCampaignById,
     getCampaignOutreach,
 } from '../services/campaignService'
+import { getInfluencers } from '../services/influencerService'
+import {
+    createOutreachRecord,
+    deleteOutreachRecord,
+} from '../services/outreachService'
 
 const STATUS_ORDER = ['CONTACTED', 'REPLIED', 'SHIPPED', 'POSTED']
 
 function CampaignProfile() {
     const { id } = useParams()
+    const navigate = useNavigate()
 
     const [campaign, setCampaign] = useState(null)
     const [outreachRecords, setOutreachRecords] = useState([])
+    const [influencers, setInfluencers] = useState([])
+    const [selectedInfluencerId, setSelectedInfluencerId] = useState('')
+
     const [loading, setLoading] = useState(true)
+    const [assigning, setAssigning] = useState(false)
     const [error, setError] = useState('')
 
-    useEffect(() => {
-        async function loadCampaignProfile() {
-            try {
-                setLoading(true)
-                setError('')
+    async function loadCampaignProfile() {
+        try {
+            setLoading(true)
+            setError('')
 
-                const [campaignData, outreachData] = await Promise.all([
-                    getCampaignById(id),
-                    getCampaignOutreach(id),
-                ])
+            const [campaignData, outreachData, influencerData] = await Promise.all([
+                getCampaignById(id),
+                getCampaignOutreach(id),
+                getInfluencers(),
+            ])
 
-                setCampaign(campaignData)
-                setOutreachRecords(outreachData || [])
-            } catch (err) {
-                console.error(err)
-                setError(err.message || 'Could not load campaign profile.')
-            } finally {
-                setLoading(false)
-            }
+            setCampaign(campaignData)
+            setOutreachRecords(outreachData || [])
+            setInfluencers(influencerData || [])
+        } catch (err) {
+            console.error(err)
+            setError(err.message || 'Could not load campaign profile.')
+        } finally {
+            setLoading(false)
         }
+    }
 
+    useEffect(() => {
         loadCampaignProfile()
     }, [id])
 
@@ -47,6 +60,82 @@ function CampaignProfile() {
             day: 'numeric',
             year: 'numeric',
         })
+    }
+
+    async function handleAssignInfluencer(e) {
+        e.preventDefault()
+
+        if (!selectedInfluencerId) {
+            setError('Please select an influencer first.')
+            return
+        }
+
+        const alreadyAssigned = outreachRecords.some(
+            (record) => record.influencer_id === selectedInfluencerId
+        )
+
+        if (alreadyAssigned) {
+            setError('This influencer is already assigned to this campaign.')
+            return
+        }
+
+        try {
+            setAssigning(true)
+            setError('')
+
+            await createOutreachRecord({
+                influencer_id: selectedInfluencerId,
+                campaign_id: id,
+            })
+
+            setSelectedInfluencerId('')
+
+            const updatedOutreach = await getCampaignOutreach(id)
+            setOutreachRecords(updatedOutreach || [])
+        } catch (err) {
+            console.error(err)
+            setError(err.message || 'Could not assign influencer to campaign.')
+        } finally {
+            setAssigning(false)
+        }
+    }
+
+    async function handleRemoveInfluencer(outreachId) {
+        const confirmed = window.confirm(
+            'Are you sure you want to remove this influencer from the campaign?'
+        )
+
+        if (!confirmed) return
+
+        try {
+            setError('')
+
+            await deleteOutreachRecord(outreachId)
+
+            setOutreachRecords((current) =>
+                current.filter((record) => record.id !== outreachId)
+            )
+        } catch (err) {
+            console.error(err)
+            setError(err.message || 'Could not remove influencer from campaign.')
+        }
+    }
+
+    async function handleDeleteCampaign() {
+        const confirmed = window.confirm(
+            'Are you sure you want to delete this campaign? This may also remove related outreach records depending on your database rules.'
+        )
+
+        if (!confirmed) return
+
+        try {
+            setError('')
+            await deleteCampaign(id)
+            navigate('/campaigns')
+        } catch (err) {
+            console.error(err)
+            setError(err.message || 'Could not delete campaign.')
+        }
     }
 
     const statusCounts = STATUS_ORDER.reduce((counts, status) => {
@@ -83,9 +172,19 @@ function CampaignProfile() {
                     </p>
                 </div>
 
-                <Link to={`/campaigns/${id}/edit`} className="primary-link-button">
-                    Edit Campaign
-                </Link>
+                <div className="dashboard-actions">
+                    <Link to={`/campaigns/${id}/edit`} className="primary-link-button">
+                        Edit Campaign
+                    </Link>
+
+                    <button
+                        type="button"
+                        className="danger-button"
+                        onClick={handleDeleteCampaign}
+                    >
+                        Remove Campaign
+                    </button>
+                </div>
             </div>
 
             <section className="stats-grid status-grid">
@@ -171,46 +270,107 @@ function CampaignProfile() {
                     </div>
                 </section>
 
-                <section className="card">
-                    <h2>Assigned Influencers</h2>
-
-                    {outreachRecords.length === 0 ? (
+                <div className="profile-main-column">
+                    <section className="card assign-card">
+                        <h2>Assign Influencer</h2>
                         <p className="muted">
-                            No influencers have been assigned to this campaign yet.
+                            Add an influencer to this campaign and start their outreach record.
                         </p>
-                    ) : (
-                        <div className="history-list">
-                            {outreachRecords.map((record) => (
-                                <div key={record.id} className="history-item">
-                                    <div className="campaign-profile-row">
-                                        <div>
-                                            <strong>
-                                                {record.influencers?.name || 'Unknown Influencer'}
-                                            </strong>
-                                            <p className="muted">
-                                                {record.influencers?.platform || 'Platform'} ·{' '}
-                                                {record.influencers?.handle || 'No handle'}
+
+                        <form onSubmit={handleAssignInfluencer} className="assign-form">
+                            <select
+                                value={selectedInfluencerId}
+                                onChange={(e) => setSelectedInfluencerId(e.target.value)}
+                            >
+                                <option value="">Select influencer</option>
+                                {influencers.map((influencer) => (
+                                    <option key={influencer.id} value={influencer.id}>
+                                        {influencer.name} ({influencer.platform})
+                                    </option>
+                                ))}
+                            </select>
+
+                            <button type="submit" disabled={assigning}>
+                                {assigning ? 'Assigning...' : 'Assign Influencer'}
+                            </button>
+                        </form>
+                    </section>
+
+                    <section className="card">
+                        <h2>Assigned Influencers</h2>
+                        <p className="muted">
+                            Influencers assigned to this campaign, including outreach status and notes.
+                        </p>
+
+                        {outreachRecords.length === 0 ? (
+                            <p className="muted">
+                                No influencers have been assigned to this campaign yet.
+                            </p>
+                        ) : (
+                            <div className="campaign-assignment-list">
+                                {outreachRecords.map((record) => (
+                                    <div key={record.id} className="campaign-assignment-card">
+                                        <div className="campaign-assignment-header">
+                                            <div>
+                                                {record.influencers?.id ? (
+                                                    <Link
+                                                        to={`/influencers/${record.influencers.id}`}
+                                                        className="campaign-assignment-title"
+                                                    >
+                                                        {record.influencers.name}
+                                                    </Link>
+                                                ) : (
+                                                    <strong>Unknown Influencer</strong>
+                                                )}
+
+                                                <p className="muted">
+                                                    {record.influencers?.platform || 'Platform'} ·{' '}
+                                                    {record.influencers?.handle || 'No handle'}
+                                                </p>
+
+                                                <p className="muted">
+                                                    Current outreach status:{' '}
+                                                    <span className="status-pill">{record.status}</span>
+                                                </p>
+                                            </div>
+
+                                            <button
+                                                type="button"
+                                                className="danger-button"
+                                                onClick={() => handleRemoveInfluencer(record.id)}
+                                            >
+                                                Remove
+                                            </button>
+                                        </div>
+
+                                        {record.notes?.length > 0 ? (
+                                            <div className="campaign-notes-block">
+                                                <strong>Recent Notes</strong>
+
+                                                <ul>
+                                                    {record.notes.slice(0, 3).map((note) => (
+                                                        <li key={note.id}>
+                                                            <p>{note.content}</p>
+                                                            <span>
+                                                                {note.created_at
+                                                                    ? new Date(note.created_at).toLocaleString()
+                                                                    : 'No date'}
+                                                            </span>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        ) : (
+                                            <p className="muted no-notes-text">
+                                                No notes have been added for this influencer yet.
                                             </p>
-                                        </div>
-
-                                        <span className="status-pill">{record.status}</span>
+                                        )}
                                     </div>
-
-                                    {record.notes?.length > 0 && (
-                                        <div className="recent-notes">
-                                            <strong>Recent Notes</strong>
-                                            <ul>
-                                                {record.notes.slice(0, 3).map((note) => (
-                                                    <li key={note.id}>{note.content}</li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    )}
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </section>
+                                ))}
+                            </div>
+                        )}
+                    </section>
+                </div>
             </div>
         </div>
     )
