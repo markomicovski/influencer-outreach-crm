@@ -6,6 +6,7 @@ import Campaigns from './pages/Campaigns'
 import Pipeline from './pages/Pipeline'
 import AdminDashboard from './pages/AdminDashboard'
 import Navbar from './components/Navbar'
+import ProtectedRoute from './components/ProtectedRoute'
 import './App.css'
 
 function App() {
@@ -18,11 +19,51 @@ function App() {
           <Routes>
             <Route path="/" element={<Navigate to="/login" />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/dashboard" element={<BrandDashboard />} />
-            <Route path="/influencers" element={<Influencers />} />
-            <Route path="/campaigns" element={<Campaigns />} />
-            <Route path="/pipeline" element={<Pipeline />} />
-            <Route path="/admin" element={<AdminDashboard />} />
+
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute allowedRoles={['BRAND_MANAGER']}>
+                  <BrandDashboard />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/influencers"
+              element={
+                <ProtectedRoute allowedRoles={['BRAND_MANAGER']}>
+                  <Influencers />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/campaigns"
+              element={
+                <ProtectedRoute allowedRoles={['BRAND_MANAGER']}>
+                  <Campaigns />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/pipeline"
+              element={
+                <ProtectedRoute allowedRoles={['BRAND_MANAGER']}>
+                  <Pipeline />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute allowedRoles={['ADMIN']}>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </main>
       </div>
