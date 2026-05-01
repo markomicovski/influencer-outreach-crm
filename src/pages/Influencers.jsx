@@ -86,6 +86,11 @@ function Influencers() {
     }
 
     async function handleDelete(id) {
+        const confirmed = window.confirm(
+            'Are you sure you want to delete this influencer?'
+        )
+
+        if (!confirmed) return
         try {
             await deleteInfluencer(id)
             await loadInfluencers()

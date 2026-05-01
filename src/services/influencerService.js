@@ -40,6 +40,7 @@ export async function deleteInfluencer(id) {
     if (error) throw error
 }
 
+
 export async function getInfluencerById(id) {
     const { data, error } = await supabase
         .from('influencers')
