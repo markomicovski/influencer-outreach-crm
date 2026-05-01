@@ -1002,3 +1002,35 @@ tbody td {
   gap: 10px;
   margin-top: 14px;
 }
+
+.filter-row {
+  display: grid;
+  grid-template-columns: 1fr 180px;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.filter-row input,
+.filter-row select {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #111827;
+  padding: 11px 12px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  outline: none;
+}
+
+.filter-row input:focus,
+.filter-row select:focus {
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+}
+
+@media (max-width: 700px) {
+  .filter-row {
+    grid-template-columns: 1fr;
+  }
+}

@@ -13,6 +13,9 @@ function Influencers() {
     const [saving, setSaving] = useState(false)
     const [error, setError] = useState('')
 
+    const [searchTerm, setSearchTerm] = useState('')
+    const [platformFilter, setPlatformFilter] = useState('ALL')
+
     const [form, setForm] = useState({
         name: '',
         platform: 'INSTAGRAM',
@@ -89,6 +92,21 @@ function Influencers() {
             setError(err.message || 'Could not delete influencer.')
         }
     }
+
+    const filteredInfluencers = influencers.filter((influencer) => {
+        const search = searchTerm.toLowerCase()
+
+        const matchesSearch =
+            influencer.name?.toLowerCase().includes(search) ||
+            influencer.handle?.toLowerCase().includes(search) ||
+            influencer.niche?.toLowerCase().includes(search) ||
+            influencer.email?.toLowerCase().includes(search)
+
+        const matchesPlatform =
+            platformFilter === 'ALL' || influencer.platform === platformFilter
+
+        return matchesSearch && matchesPlatform
+    })
 
     return (
         <div>
@@ -185,11 +203,34 @@ function Influencers() {
 
                 <section className="card">
                     <h2>Influencer List</h2>
+                    <div className="filter-row">
+                        <input
+                            type="text"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            placeholder="Search by name, handle, niche, or email..."
+                        />
+
+                        <select
+                            value={platformFilter}
+                            onChange={(e) => setPlatformFilter(e.target.value)}
+                        >
+                            <option value="ALL">All Platforms</option>
+                            <option value="INSTAGRAM">Instagram</option>
+                            <option value="YOUTUBE">YouTube</option>
+                            <option value="TIKTOK">TikTok</option>
+                            <option value="TWITTER">Twitter/X</option>
+                            <option value="LINKEDIN">LinkedIn</option>
+                            <option value="OTHER">Other</option>
+                        </select>
+                    </div>
 
                     {loading ? (
                         <p>Loading influencers...</p>
                     ) : influencers.length === 0 ? (
                         <p className="muted">No influencers have been added yet.</p>
+                    ) : filteredInfluencers.length === 0 ? (
+                        <p className="muted">No influencers match your current search or filter.</p>
                     ) : (
                         <div className="table-wrap">
                             <table>
@@ -204,7 +245,7 @@ function Influencers() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {influencers.map((influencer) => (
+                                    {filteredInfluencers.map((influencer) => (
                                         <tr key={influencer.id}>
                                             <td>
                                                 <Link to={`/influencers/${influencer.id}`} className="table-link">
