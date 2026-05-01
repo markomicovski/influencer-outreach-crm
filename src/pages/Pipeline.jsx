@@ -19,10 +19,12 @@ const NEXT_STATUS = {
     POSTED: null,
 }
 
+
 function Pipeline() {
     const [outreachRecords, setOutreachRecords] = useState([])
     const [influencers, setInfluencers] = useState([])
     const [campaigns, setCampaigns] = useState([])
+    const [selectedPipelineCampaignId, setSelectedPipelineCampaignId] = useState('ALL')
 
     const [selectedInfluencerId, setSelectedInfluencerId] = useState('')
     const [selectedCampaignId, setSelectedCampaignId] = useState('')
@@ -114,6 +116,7 @@ function Pipeline() {
         }
     }
 
+
     async function handleAddNote(recordId) {
         const content = noteTextByRecord[recordId]
 
@@ -142,9 +145,6 @@ function Pipeline() {
         }
     }
 
-    function getRecordsByStatus(status) {
-        return outreachRecords.filter((record) => record.status === status)
-    }
 
     async function handleDeleteOutreach(recordId) {
         const confirmed = window.confirm(
@@ -163,6 +163,48 @@ function Pipeline() {
         }
     }
 
+    const filteredOutreachRecords =
+        selectedPipelineCampaignId === 'ALL'
+            ? outreachRecords
+            : outreachRecords.filter(
+                (record) => record.campaign_id === selectedPipelineCampaignId
+            )
+
+    const pipelineStats = {
+        total: filteredOutreachRecords.length,
+        CONTACTED: filteredOutreachRecords.filter(
+            (record) => record.status === 'CONTACTED'
+        ).length,
+        REPLIED: filteredOutreachRecords.filter(
+            (record) => record.status === 'REPLIED'
+        ).length,
+        SHIPPED: filteredOutreachRecords.filter(
+            (record) => record.status === 'SHIPPED'
+        ).length,
+        POSTED: filteredOutreachRecords.filter(
+            (record) => record.status === 'POSTED'
+        ).length,
+    }
+
+    function getRecordsByStatus(status) {
+        return filteredOutreachRecords.filter((record) => record.status === status)
+    }
+
+    function getStatusTimestamp(record) {
+        const statusToField = {
+            CONTACTED: record.contacted_at,
+            REPLIED: record.replied_at,
+            SHIPPED: record.shipped_at,
+            POSTED: record.posted_at,
+        }
+
+        const timestamp = statusToField[record.status] || record.updated_at || record.created_at
+
+        if (!timestamp) return 'No timestamp available'
+
+        return new Date(timestamp).toLocaleString()
+    }
+
     return (
         <div>
             <div className="page-header">
@@ -173,6 +215,57 @@ function Pipeline() {
                     </p>
                 </div>
             </div>
+
+            <section className="card pipeline-filter-card">
+                <div className="section-header">
+                    <div>
+                        <h2>Pipeline View</h2>
+                        <p className="muted">
+                            Filter the outreach board by campaign and review current progress.
+                        </p>
+                    </div>
+
+                    <select
+                        value={selectedPipelineCampaignId}
+                        onChange={(e) => setSelectedPipelineCampaignId(e.target.value)}
+                        className="pipeline-filter-select"
+                    >
+                        <option value="ALL">All Campaigns</option>
+                        {campaigns.map((campaign) => (
+                            <option key={campaign.id} value={campaign.id}>
+                                {campaign.name}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                <div className="pipeline-stats-grid">
+                    <div className="pipeline-stat-card">
+                        <span>Total</span>
+                        <strong>{pipelineStats.total}</strong>
+                    </div>
+
+                    <div className="pipeline-stat-card">
+                        <span>Contacted</span>
+                        <strong>{pipelineStats.CONTACTED}</strong>
+                    </div>
+
+                    <div className="pipeline-stat-card">
+                        <span>Replied</span>
+                        <strong>{pipelineStats.REPLIED}</strong>
+                    </div>
+
+                    <div className="pipeline-stat-card">
+                        <span>Shipped</span>
+                        <strong>{pipelineStats.SHIPPED}</strong>
+                    </div>
+
+                    <div className="pipeline-stat-card">
+                        <span>Posted</span>
+                        <strong>{pipelineStats.POSTED}</strong>
+                    </div>
+                </div>
+            </section>
 
             <section className="card pipeline-create-card">
                 <h2>Start New Outreach</h2>
@@ -269,6 +362,11 @@ function Pipeline() {
                                                     <p className="campaign-name">No campaign</p>
                                                 )}
 
+                                                <div className="pipeline-meta-row">
+                                                    <span>{record.notes?.length || 0} notes</span>
+                                                    <span>Last updated: {getStatusTimestamp(record)}</span>
+                                                </div>
+
                                                 <div className="note-section">
                                                     <label>Add Note</label>
                                                     <textarea
@@ -310,24 +408,41 @@ function Pipeline() {
                                                 )}
 
                                                 <div className="pipeline-card-actions">
+
                                                     {NEXT_STATUS[record.status] ? (
+
                                                         <button
+
                                                             type="button"
+
                                                             className="primary-button full-width"
+
                                                             onClick={() => handleMoveNext(record)}
+
                                                         >
+
                                                             Move to {NEXT_STATUS[record.status]}
+
                                                         </button>
+
                                                     ) : (
+
                                                         <p className="complete-text">Outreach complete</p>
+
                                                     )}
 
                                                     <button
+
                                                         type="button"
+
                                                         className="danger-button full-width"
+
                                                         onClick={() => handleDeleteOutreach(record.id)}
+
                                                     >
+
                                                         Remove Outreach
+
                                                     </button>
                                                 </div>
                                             </div>
