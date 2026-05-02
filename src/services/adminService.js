@@ -59,3 +59,55 @@ export async function sendPasswordResetEmail(email) {
   return data
 
 }
+
+export async function adminCreateUser({ name, email, password, role }) {
+
+  const { data, error } = await supabase.functions.invoke('admin-users', {
+
+    body: {
+
+      action: 'createUser',
+
+      name,
+
+      email,
+
+      password,
+
+      role,
+
+    },
+
+  })
+
+  if (error) throw error
+
+  if (data?.error) throw new Error(data.error)
+
+  return data
+
+}
+
+export async function adminResetPassword({ userId, password }) {
+
+  const { data, error } = await supabase.functions.invoke('admin-users', {
+
+    body: {
+
+      action: 'resetPassword',
+
+      userId,
+
+      password,
+
+    },
+
+  })
+
+  if (error) throw error
+
+  if (data?.error) throw new Error(data.error)
+
+  return data
+
+}

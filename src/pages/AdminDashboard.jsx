@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom'
 import {
   getAdminDashboardData,
   updateUserActiveStatus,
-  sendPasswordResetEmail,
+  adminCreateUser,
+  adminResetPassword,
 } from '../services/adminService'
 import { useAuth } from '../context/AuthContext'
 
@@ -27,8 +28,87 @@ function AdminDashboard() {
   const [loading, setLoading] = useState(true)
   const [updatingUserId, setUpdatingUserId] = useState('')
   const [error, setError] = useState('')
-  const [resettingUserId, setResettingUserId] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
+
+  const [passwordModalUser, setPasswordModalUser] = useState(null)
+  const [newPassword, setNewPassword] = useState('')
+  const [resettingPassword, setResettingPassword] = useState(false)
+
+  const [creatingUser, setCreatingUser] = useState(false)
+  const [createUserForm, setCreateUserForm] = useState({
+    name: '',
+    email: '',
+    password: '',
+    role: 'BRAND_MANAGER',
+  })
+
+  function handleCreateUserChange(e) {
+    const { name, value } = e.target
+
+    setCreateUserForm((current) => ({
+      ...current,
+      [name]: value,
+    }))
+  }
+
+  async function handleDirectPasswordReset(e) {
+    e.preventDefault()
+
+    if (!passwordModalUser) return
+
+    if (newPassword.length < 6) {
+      setError('New password must be at least 6 characters.')
+      return
+    }
+
+    try {
+      setResettingPassword(true)
+      setError('')
+      setSuccessMessage('')
+
+      await adminResetPassword({
+        userId: passwordModalUser.id,
+        password: newPassword,
+      })
+
+      setSuccessMessage(`Password reset for ${passwordModalUser.email}.`)
+      setPasswordModalUser(null)
+      setNewPassword('')
+    } catch (err) {
+      console.error(err)
+      setError(err.message || 'Could not reset password.')
+    } finally {
+      setResettingPassword(false)
+    }
+  }
+
+  async function handleCreateUser(e) {
+    e.preventDefault()
+
+    try {
+      setCreatingUser(true)
+      setError('')
+      setSuccessMessage('')
+
+      await adminCreateUser(createUserForm)
+
+      setSuccessMessage(`User account created for ${createUserForm.email}.`)
+
+      setCreateUserForm({
+        name: '',
+        email: '',
+        password: '',
+        role: 'BRAND_MANAGER',
+      })
+
+      await loadAdminDashboard()
+    } catch (err) {
+      console.error(err)
+      setError(err.message || 'Could not create user.')
+    } finally {
+      setCreatingUser(false)
+    }
+  }
 
   async function loadAdminDashboard() {
     try {
@@ -74,28 +154,6 @@ function AdminDashboard() {
     })
   }
 
-  async function handleSendPasswordReset(user) {
-    const confirmed = window.confirm(
-      `Send a password reset email to ${user.email}?`
-    )
-
-    if (!confirmed) return
-
-    try {
-      setResettingUserId(user.id)
-      setError('')
-      setSuccessMessage('')
-
-      await sendPasswordResetEmail(user.email)
-
-      setSuccessMessage(`Password reset email sent to ${user.email}.`)
-    } catch (err) {
-      console.error(err)
-      setError(err.message || 'Could not send password reset email.')
-    } finally {
-      setResettingUserId('')
-    }
-  }
 
   if (loading) {
     return (
@@ -161,6 +219,46 @@ function AdminDashboard() {
 
   return (
     <div>
+      {passwordModalUser && (
+        <div
+          className="modal-overlay"
+          onClick={(e) =>
+            e.target === e.currentTarget && setPasswordModalUser(null)
+          }
+        >
+          <div className="modal">
+            <div className="modal-header">
+              <h2>Reset Password</h2>
+              <button
+                className="modal-close"
+                onClick={() => setPasswordModalUser(null)}
+                aria-label="Close"
+              >
+                &times;
+              </button>
+            </div>
+
+            <p className="muted">
+              Set a new temporary password for {passwordModalUser.email}.
+            </p>
+
+            <form onSubmit={handleDirectPasswordReset} className="form">
+              <label>New Temporary Password</label>
+              <input
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="New temporary password"
+                required
+              />
+
+              <button type="submit" disabled={resettingPassword}>
+                {resettingPassword ? 'Resetting...' : 'Reset Password'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
       <div className="page-header dashboard-header">
         <div>
           <h1>Admin Dashboard</h1>
@@ -171,9 +269,6 @@ function AdminDashboard() {
         </div>
 
         <div className="dashboard-actions">
-          <Link to="/login?mode=register&adminCreate=true" className="primary-link-button">
-            Register New User
-          </Link>
 
           <button
             type="button"
@@ -236,6 +331,70 @@ function AdminDashboard() {
         </div>
       </section>
 
+      <section className="card admin-create-user-card">
+        <div className="section-header">
+          <div>
+            <h2>Create User</h2>
+            <p className="muted">
+              Create a new CRM account with a temporary password.
+            </p>
+          </div>
+        </div>
+
+        <form onSubmit={handleCreateUser} className="admin-create-user-form">
+          <div>
+            <label>Name</label>
+            <input
+              name="name"
+              value={createUserForm.name}
+              onChange={handleCreateUserChange}
+              placeholder="Jordan Smith"
+              required
+            />
+          </div>
+
+          <div>
+            <label>Email</label>
+            <input
+              name="email"
+              type="email"
+              value={createUserForm.email}
+              onChange={handleCreateUserChange}
+              placeholder="jordan@example.com"
+              required
+            />
+          </div>
+
+          <div>
+            <label>Temporary Password</label>
+            <input
+              name="password"
+              type="password"
+              value={createUserForm.password}
+              onChange={handleCreateUserChange}
+              placeholder="Temporary password"
+              required
+            />
+          </div>
+
+          <div>
+            <label>Role</label>
+            <select
+              name="role"
+              value={createUserForm.role}
+              onChange={handleCreateUserChange}
+            >
+              <option value="BRAND_MANAGER">Brand Manager</option>
+              <option value="ADMIN">Admin</option>
+            </select>
+          </div>
+
+          <button type="submit" disabled={creatingUser}>
+            {creatingUser ? 'Creating...' : 'Create User'}
+          </button>
+        </form>
+      </section>
+
       <section className="card">
         <div className="section-header">
           <div>
@@ -270,8 +429,17 @@ function AdminDashboard() {
                   </div>
                 </div>
                 <div className="list-card-actions">
-                  <button type="button" className="secondary-button" onClick={() => handleSendPasswordReset(user)} disabled={resettingUserId === user.id}>
-                    {resettingUserId === user.id ? 'Sending...' : 'Reset Password'}
+                  <button
+                    type="button"
+                    className="secondary-button"
+                    onClick={() => {
+                      setError('')
+                      setSuccessMessage('')
+                      setNewPassword('')
+                      setPasswordModalUser(user)
+                    }}
+                  >
+                    Reset Password
                   </button>
                   <button
                     type="button"
