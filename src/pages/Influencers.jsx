@@ -125,6 +125,62 @@ function Influencers() {
         return matchesSearch && matchesPlatform
     })
 
+    function exportInfluencersCSV() {
+        if (filteredInfluencers.length === 0) {
+            setError('There are no influencers to export.')
+            return
+        }
+
+        const headers = [
+            'Name',
+            'Platform',
+            'Handle',
+            'Email',
+            'Follower Count',
+            'Niche',
+            'Contact Details',
+        ]
+
+        const rows = filteredInfluencers.map((influencer) => [
+            influencer.name || '',
+            influencer.platform || '',
+            influencer.handle || '',
+            influencer.email || '',
+            influencer.follower_count || '',
+            influencer.niche || '',
+            influencer.contact_details || '',
+        ])
+
+        const csvContent = [
+            headers,
+            ...rows,
+        ]
+            .map((row) =>
+                row
+                    .map((value) => {
+                        const stringValue = String(value).replace(/"/g, '""')
+                        return `"${stringValue}"`
+                    })
+                    .join(',')
+            )
+            .join('\n')
+
+        const blob = new Blob([csvContent], {
+            type: 'text/csv;charset=utf-8;',
+        })
+
+        const url = URL.createObjectURL(blob)
+        const link = document.createElement('a')
+
+        link.href = url
+        link.setAttribute('download', 'influencers-export.csv')
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+
+        URL.revokeObjectURL(url)
+    }
+
     return (
         <div>
             {modalOpen && (
@@ -239,9 +295,18 @@ function Influencers() {
                     <div>
                         <h2>All Influencers</h2>
                         <p className="muted">
-                            {influencers.length} total influencer{influencers.length === 1 ? '' : 's'} in the CRM.
+                            {filteredInfluencers.length} shown out of {influencers.length} total influencer{influencers.length === 1 ? '' : 's'} in the CRM.
                         </p>
                     </div>
+
+                    <button
+                        type="button"
+                        className="secondary-action-button"
+                        onClick={exportInfluencersCSV}
+                        disabled={filteredInfluencers.length === 0}
+                    >
+                        Export CSV
+                    </button>
                 </div>
 
                 <div className="filter-row">

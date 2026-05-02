@@ -303,7 +303,6 @@ function Pipeline() {
                             <option key={c.id} value={c.id}>{c.name}</option>
                         ))}
                     </select>
-                    <button className="secondary-button" disabled>Export CSV</button>
                     <button className="primary-button" onClick={openOutreachModal}>+ Start Outreach</button>
                 </div>
             </div>
