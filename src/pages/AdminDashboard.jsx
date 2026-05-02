@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import {
   getAdminDashboardData,
   updateUserActiveStatus,
+  sendPasswordResetEmail,
 } from '../services/adminService'
 import { useAuth } from '../context/AuthContext'
 
@@ -26,6 +27,8 @@ function AdminDashboard() {
   const [loading, setLoading] = useState(true)
   const [updatingUserId, setUpdatingUserId] = useState('')
   const [error, setError] = useState('')
+  const [resettingUserId, setResettingUserId] = useState('')
+  const [successMessage, setSuccessMessage] = useState('')
 
   async function loadAdminDashboard() {
     try {
@@ -69,6 +72,29 @@ function AdminDashboard() {
       day: 'numeric',
       year: 'numeric',
     })
+  }
+
+  async function handleSendPasswordReset(user) {
+    const confirmed = window.confirm(
+      `Send a password reset email to ${user.email}?`
+    )
+
+    if (!confirmed) return
+
+    try {
+      setResettingUserId(user.id)
+      setError('')
+      setSuccessMessage('')
+
+      await sendPasswordResetEmail(user.email)
+
+      setSuccessMessage(`Password reset email sent to ${user.email}.`)
+    } catch (err) {
+      console.error(err)
+      setError(err.message || 'Could not send password reset email.')
+    } finally {
+      setResettingUserId('')
+    }
   }
 
   if (loading) {
@@ -145,7 +171,7 @@ function AdminDashboard() {
         </div>
 
         <div className="dashboard-actions">
-          <Link to="/login" className="primary-link-button">
+          <Link to="/login?mode=register&adminCreate=true" className="primary-link-button">
             Register New User
           </Link>
 
@@ -160,6 +186,7 @@ function AdminDashboard() {
       </div>
 
       {error && <p className="error">{error}</p>}
+      {successMessage && <p className="success-message">{successMessage}</p>}
 
       <section className="stats-grid admin-stats-grid">
         <div className="stat-card">
@@ -243,8 +270,8 @@ function AdminDashboard() {
                   </div>
                 </div>
                 <div className="list-card-actions">
-                  <button type="button" className="secondary-button">
-                    Reset Password
+                  <button type="button" className="secondary-button" onClick={() => handleSendPasswordReset(user)} disabled={resettingUserId === user.id}>
+                    {resettingUserId === user.id ? 'Sending...' : 'Reset Password'}
                   </button>
                   <button
                     type="button"

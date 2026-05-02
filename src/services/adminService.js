@@ -45,3 +45,17 @@ export async function updateUserActiveStatus(id, isActive) {
   if (error) throw error
   return data
 }
+
+export async function sendPasswordResetEmail(email) {
+
+  const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+
+    redirectTo: `${window.location.origin}/reset-password`,
+
+  })
+
+  if (error) throw error
+
+  return data
+
+}

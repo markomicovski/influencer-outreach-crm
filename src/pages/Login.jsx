@@ -1,12 +1,18 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { loginUser, registerUser } from '../services/authService'
 import { useAuth } from '../context/AuthContext'
+
 
 function Login() {
     const navigate = useNavigate()
 
-    const [mode, setMode] = useState('login')
+    const [searchParams] = useSearchParams()
+    const adminCreate = searchParams.get('adminCreate') === 'true'
+
+    const initialMode = searchParams.get('mode') === 'register' ? 'register' : 'login'
+
+    const [mode, setMode] = useState(initialMode)
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -14,7 +20,18 @@ function Login() {
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
 
-    const { setProfile } = useAuth()
+    const { profile, setProfile } = useAuth()
+
+    useEffect(() => {
+        if (!profile) return
+        if (adminCreate) return
+
+        if (profile.role === 'ADMIN') {
+            navigate('/admin')
+        } else {
+            navigate('/dashboard')
+        }
+    }, [profile, adminCreate, navigate])
 
     function redirectByRole(profile) {
         if (profile.role === 'ADMIN') {
@@ -39,6 +56,12 @@ function Login() {
             }
 
             setProfile(profile)
+
+            if (adminCreate && mode === 'register') {
+                navigate('/admin')
+                return
+            }
+
             redirectByRole(profile)
         } catch (err) {
             console.error(err)

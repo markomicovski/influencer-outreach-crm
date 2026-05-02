@@ -9,6 +9,7 @@ import CampaignProfile from './pages/CampaignProfile'
 import EditCampaign from './pages/EditCampaign'
 import Pipeline from './pages/Pipeline'
 import AdminDashboard from './pages/AdminDashboard'
+import ResetPassword from './pages/ResetPassword'
 import Navbar from './components/Navbar'
 import ProtectedRoute from './components/ProtectedRoute'
 import NotFound from './pages/NotFound'
@@ -25,6 +26,7 @@ function App() {
             <Route path="/" element={<Navigate to="/login" />} />
             <Route path="/login" element={<Login />} />
             <Route path="*" element={<NotFound />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
 
             <Route
               path="/dashboard"
