@@ -154,7 +154,69 @@ function CampaignProfile() {
     const progressPercent =
         totalAssigned === 0 ? 0 : Math.round((postedCount / totalAssigned) * 100)
 
-    if (loading) return <p>Loading campaign profile...</p>
+    if (loading) return (
+        <div>
+            <div className="page-header dashboard-header">
+                <div>
+                    <div className="skeleton" style={{ width: 130, height: 11, marginBottom: 10 }} />
+                    <div className="skeleton" style={{ width: 220, height: 32, marginBottom: 8 }} />
+                    <div className="skeleton" style={{ width: 340, height: 13 }} />
+                </div>
+                <div className="dashboard-actions">
+                    <div className="skeleton" style={{ width: 110, height: 36, borderRadius: 10 }} />
+                    <div className="skeleton" style={{ width: 130, height: 36, borderRadius: 20 }} />
+                </div>
+            </div>
+            <section className="stats-grid status-grid">
+                {[...Array(4)].map((_, i) => (
+                    <div key={i} className="stat-card small-stat">
+                        <div className="skeleton" style={{ width: 80, height: 11, marginBottom: 8 }} />
+                        <div className="skeleton" style={{ width: 40, height: 26 }} />
+                    </div>
+                ))}
+            </section>
+            <section className="card campaign-progress-card">
+                <div className="section-header" style={{ marginBottom: 14 }}>
+                    <div>
+                        <div className="skeleton" style={{ width: 140, height: 13, marginBottom: 6 }} />
+                        <div className="skeleton" style={{ width: 260, height: 11 }} />
+                    </div>
+                    <div className="skeleton" style={{ width: 90, height: 22, borderRadius: 20 }} />
+                </div>
+                <div className="skeleton" style={{ height: 8, borderRadius: 10 }} />
+            </section>
+            <div className="profile-grid">
+                <section className="card">
+                    <div className="skeleton" style={{ width: 130, height: 13, marginBottom: 20 }} />
+                    <div className="detail-list">
+                        {[...Array(5)].map((_, i) => (
+                            <div key={i}>
+                                <div className="skeleton" style={{ width: 70, height: 11 }} />
+                                <div className="skeleton" style={{ width: 120, height: 11 }} />
+                            </div>
+                        ))}
+                    </div>
+                </section>
+                <div className="profile-main-column">
+                    <section className="card assign-card">
+                        <div className="skeleton" style={{ width: 140, height: 13, marginBottom: 8 }} />
+                        <div className="skeleton" style={{ width: '100%', height: 36, borderRadius: 10, marginBottom: 8 }} />
+                        <div className="skeleton" style={{ width: 130, height: 36, borderRadius: 10 }} />
+                    </section>
+                    <section className="card">
+                        <div className="skeleton" style={{ width: 160, height: 13, marginBottom: 8 }} />
+                        <div className="skeleton" style={{ width: '70%', height: 13, marginBottom: 16 }} />
+                        {[...Array(2)].map((_, i) => (
+                            <div key={i} className="campaign-assignment-card">
+                                <div className="skeleton" style={{ width: 140, height: 13, marginBottom: 6 }} />
+                                <div className="skeleton" style={{ width: '60%', height: 11 }} />
+                            </div>
+                        ))}
+                    </section>
+                </div>
+            </div>
+        </div>
+    )
     if (error) return <p className="error">{error}</p>
     if (!campaign) return <p>Campaign not found.</p>
 

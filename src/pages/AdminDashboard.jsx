@@ -72,7 +72,65 @@ function AdminDashboard() {
   }
 
   if (loading) {
-    return <p>Loading admin dashboard...</p>
+    return (
+      <div>
+        <div className="page-header dashboard-header">
+          <div>
+            <div className="skeleton" style={{ width: 180, height: 32, marginBottom: 8 }} />
+            <div className="skeleton" style={{ width: 340, height: 13 }} />
+          </div>
+          <div className="dashboard-actions">
+            <div className="skeleton" style={{ width: 130, height: 36, borderRadius: 10 }} />
+            <div className="skeleton" style={{ width: 110, height: 36, borderRadius: 10 }} />
+          </div>
+        </div>
+        <section className="stats-grid admin-stats-grid">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="stat-card">
+              <div className="skeleton" style={{ width: 110, height: 11, marginBottom: 10 }} />
+              <div className="skeleton" style={{ width: 50, height: 30, marginBottom: 6 }} />
+              <div className="skeleton" style={{ width: 160, height: 11 }} />
+            </div>
+          ))}
+        </section>
+        <section className="stats-grid admin-stats-grid">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="stat-card small-stat">
+              <div className="skeleton" style={{ width: 90, height: 11, marginBottom: 8 }} />
+              <div className="skeleton" style={{ width: 40, height: 24 }} />
+            </div>
+          ))}
+        </section>
+        <section className="card">
+          <div className="section-header" style={{ marginBottom: 16 }}>
+            <div>
+              <div className="skeleton" style={{ width: 130, height: 13, marginBottom: 6 }} />
+              <div className="skeleton" style={{ width: 200, height: 11 }} />
+            </div>
+            <div className="skeleton" style={{ width: 60, height: 22, borderRadius: 20 }} />
+          </div>
+          <div className="list-rows">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="list-card">
+                <div className="list-card-info">
+                  <div className="skeleton" style={{ width: 130, height: 13, marginBottom: 6 }} />
+                  <div className="list-card-meta">
+                    <div className="skeleton" style={{ width: 160, height: 11 }} />
+                    <div className="skeleton" style={{ width: 80, height: 18, borderRadius: 20 }} />
+                    <div className="skeleton" style={{ width: 50, height: 18, borderRadius: 20 }} />
+                    <div className="skeleton" style={{ width: 80, height: 11 }} />
+                  </div>
+                </div>
+                <div className="list-card-actions">
+                  <div className="skeleton" style={{ width: 110, height: 30, borderRadius: 10 }} />
+                  <div className="skeleton" style={{ width: 90, height: 30, borderRadius: 20 }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+    )
   }
 
   return (

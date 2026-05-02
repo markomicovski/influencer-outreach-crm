@@ -312,33 +312,74 @@ function Pipeline() {
 
             {/* ── Pipeline Stats ── */}
             <p className="dash-section-label">Pipeline overview</p>
-            <div className="pipeline-stats-grid" style={{ marginBottom: 22 }}>
-                <div className="pipeline-stat-card">
-                    <span>Total</span>
-                    <strong>{pipelineStats.total}</strong>
+            {loading ? (
+                <div className="pipeline-stats-grid" style={{ marginBottom: 22 }}>
+                    {[...Array(5)].map((_, i) => (
+                        <div key={i} className="pipeline-stat-card">
+                            <div className="skeleton" style={{ width: '60%', height: 10, marginBottom: 8 }} />
+                            <div className="skeleton" style={{ width: '40%', height: 22 }} />
+                        </div>
+                    ))}
                 </div>
-                <div className="pipeline-stat-card">
-                    <span>Contacted</span>
-                    <strong>{pipelineStats.CONTACTED}</strong>
+            ) : (
+                <div className="pipeline-stats-grid" style={{ marginBottom: 22 }}>
+                    <div className="pipeline-stat-card">
+                        <span>Total</span>
+                        <strong>{pipelineStats.total}</strong>
+                    </div>
+                    <div className="pipeline-stat-card">
+                        <span>Contacted</span>
+                        <strong>{pipelineStats.CONTACTED}</strong>
+                    </div>
+                    <div className="pipeline-stat-card">
+                        <span>Replied</span>
+                        <strong>{pipelineStats.REPLIED}</strong>
+                    </div>
+                    <div className="pipeline-stat-card">
+                        <span>Shipped</span>
+                        <strong>{pipelineStats.SHIPPED}</strong>
+                    </div>
+                    <div className="pipeline-stat-card">
+                        <span>Posted</span>
+                        <strong>{pipelineStats.POSTED}</strong>
+                    </div>
                 </div>
-                <div className="pipeline-stat-card">
-                    <span>Replied</span>
-                    <strong>{pipelineStats.REPLIED}</strong>
-                </div>
-                <div className="pipeline-stat-card">
-                    <span>Shipped</span>
-                    <strong>{pipelineStats.SHIPPED}</strong>
-                </div>
-                <div className="pipeline-stat-card">
-                    <span>Posted</span>
-                    <strong>{pipelineStats.POSTED}</strong>
-                </div>
-            </div>
+            )}
 
             {/* ── Kanban Board ── */}
             <p className="dash-section-label">Kanban board</p>
             {loading ? (
-                <p className="muted">Loading pipeline...</p>
+                <div className="pipeline-board">
+                    {[...Array(4)].map((_, i) => (
+                        <section key={i} className="pipeline-column">
+                            <div className="pipeline-column-header">
+                                <div className="skeleton" style={{ width: 80, height: 13 }} />
+                                <div className="skeleton" style={{ width: 28, height: 20, borderRadius: 20 }} />
+                            </div>
+                            <div className="pipeline-cards">
+                                {[...Array(3)].map((_, j) => (
+                                    <div key={j} className="pipeline-card">
+                                        <div className="pipe-card-top" style={{ marginBottom: 8 }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                                <div className="skeleton" style={{ width: 32, height: 32, borderRadius: '50%' }} />
+                                                <div>
+                                                    <div className="skeleton" style={{ width: 100, height: 12, marginBottom: 5 }} />
+                                                    <div className="skeleton" style={{ width: 70, height: 10 }} />
+                                                </div>
+                                            </div>
+                                            <div className="skeleton" style={{ width: 54, height: 18, borderRadius: 20 }} />
+                                        </div>
+                                        <div className="skeleton" style={{ width: '70%', height: 11, marginBottom: 10 }} />
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: 8, borderTop: '1px solid #ede9fc' }}>
+                                            <div className="skeleton" style={{ width: 48, height: 22, borderRadius: 6 }} />
+                                            <div className="skeleton" style={{ width: 90, height: 22, borderRadius: 6 }} />
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    ))}
+                </div>
             ) : (
                 <div className="pipeline-board">
                     {STATUS_ORDER.map((status) => {

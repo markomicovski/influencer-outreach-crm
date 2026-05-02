@@ -79,7 +79,81 @@ function BrandDashboard() {
   }, {})
 
   if (loading) {
-    return <p>Loading dashboard...</p>
+    return (
+      <div>
+        <div className="page-header dashboard-header">
+          <div>
+            <div className="skeleton" style={{ width: 240, height: 32, marginBottom: 8 }} />
+            <div className="skeleton" style={{ width: 360, height: 13 }} />
+          </div>
+          <div className="dashboard-actions">
+            <div className="skeleton" style={{ width: 110, height: 36, borderRadius: 10 }} />
+            <div className="skeleton" style={{ width: 130, height: 36, borderRadius: 10 }} />
+          </div>
+        </div>
+        <div className="skeleton" style={{ width: 72, height: 10, marginBottom: 11 }} />
+        <section className="stats-grid">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="stat-card">
+              <div className="skeleton" style={{ width: 110, height: 11, marginBottom: 10 }} />
+              <div className="skeleton" style={{ width: 52, height: 30, marginBottom: 6 }} />
+              <div className="skeleton" style={{ width: 150, height: 11 }} />
+            </div>
+          ))}
+        </section>
+        <div className="skeleton" style={{ width: 140, height: 10, marginBottom: 14 }} />
+        <div className="snapshot-board">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="snapshot-column">
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
+                <div className="skeleton" style={{ width: 70, height: 10 }} />
+                <div className="skeleton" style={{ width: 24, height: 18, borderRadius: 20 }} />
+              </div>
+              <div className="skeleton" style={{ height: 54, borderRadius: 10, marginBottom: 6 }} />
+              <div className="skeleton" style={{ height: 54, borderRadius: 10 }} />
+            </div>
+          ))}
+        </div>
+        <div className="dashboard-grid">
+          <section className="card">
+            <div className="section-header" style={{ marginBottom: 16 }}>
+              <div className="skeleton" style={{ width: 180, height: 13 }} />
+              <div className="skeleton" style={{ width: 80, height: 13 }} />
+            </div>
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="dash-act-row">
+                <div className="skeleton" style={{ width: 32, height: 32, borderRadius: '50%', flexShrink: 0 }} />
+                <div className="dash-act-info" style={{ flex: 1 }}>
+                  <div className="skeleton" style={{ width: '55%', height: 12, marginBottom: 5 }} />
+                  <div className="skeleton" style={{ width: '40%', height: 11 }} />
+                </div>
+                <div className="skeleton" style={{ width: 64, height: 20, borderRadius: 20 }} />
+              </div>
+            ))}
+          </section>
+          <section className="card">
+            <div className="section-header" style={{ marginBottom: 16 }}>
+              <div className="skeleton" style={{ width: 150, height: 13 }} />
+              <div className="skeleton" style={{ width: 55, height: 13 }} />
+            </div>
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="dash-camp-row">
+                <div className="dash-camp-top">
+                  <div className="skeleton" style={{ width: '50%', height: 12 }} />
+                  <div className="skeleton" style={{ width: 60, height: 20, borderRadius: 20 }} />
+                </div>
+                <div className="skeleton" style={{ width: '35%', height: 11, marginBottom: 8 }} />
+                <div className="skeleton" style={{ height: 6, borderRadius: 4, marginBottom: 6 }} />
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <div className="skeleton" style={{ width: '28%', height: 11 }} />
+                  <div className="skeleton" style={{ width: '38%', height: 11 }} />
+                </div>
+              </div>
+            ))}
+          </section>
+        </div>
+      </div>
+    )
   }
 
   return (

@@ -266,7 +266,24 @@ function Influencers() {
                 </div>
 
                 {loading ? (
-                    <p className="muted">Loading influencers...</p>
+                    <div className="list-rows">
+                        {[...Array(5)].map((_, i) => (
+                            <div key={i} className="list-card">
+                                <div className="list-card-info">
+                                    <div className="skeleton" style={{ width: 140, height: 13, marginBottom: 6 }} />
+                                    <div className="list-card-meta">
+                                        <div className="skeleton" style={{ width: 66, height: 18, borderRadius: 20 }} />
+                                        <div className="skeleton" style={{ width: 90, height: 18 }} />
+                                        <div className="skeleton" style={{ width: 110, height: 18 }} />
+                                    </div>
+                                </div>
+                                <div className="list-card-actions">
+                                    <div className="skeleton" style={{ width: 44, height: 28, borderRadius: 10 }} />
+                                    <div className="skeleton" style={{ width: 60, height: 28, borderRadius: 20 }} />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 ) : influencers.length === 0 ? (
                     <p className="muted">
                         No influencers yet. Click <strong>Add Influencer</strong> to get started.

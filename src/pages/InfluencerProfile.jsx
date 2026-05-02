@@ -122,7 +122,50 @@ function InfluencerProfile() {
         }
     }
 
-    if (loading) return <p>Loading influencer profile...</p>
+    if (loading) return (
+        <div>
+            <div className="page-header dashboard-header">
+                <div>
+                    <div className="skeleton" style={{ width: 130, height: 11, marginBottom: 10 }} />
+                    <div className="skeleton" style={{ width: 200, height: 32, marginBottom: 8 }} />
+                    <div className="skeleton" style={{ width: 320, height: 13 }} />
+                </div>
+                <div className="skeleton" style={{ width: 96, height: 36, borderRadius: 10 }} />
+            </div>
+            <div className="profile-grid">
+                <section className="card">
+                    <div className="skeleton" style={{ width: 110, height: 13, marginBottom: 20 }} />
+                    <div className="detail-list">
+                        {[...Array(6)].map((_, i) => (
+                            <div key={i}>
+                                <div className="skeleton" style={{ width: 70, height: 11 }} />
+                                <div className="skeleton" style={{ width: 120, height: 11 }} />
+                            </div>
+                        ))}
+                    </div>
+                </section>
+                <div className="profile-main-column">
+                    <section className="card assign-card">
+                        <div className="skeleton" style={{ width: 140, height: 13, marginBottom: 8 }} />
+                        <div className="skeleton" style={{ width: '100%', height: 13, marginBottom: 16 }} />
+                        <div className="skeleton" style={{ width: '100%', height: 36, borderRadius: 10, marginBottom: 8 }} />
+                        <div className="skeleton" style={{ width: 140, height: 36, borderRadius: 10 }} />
+                    </section>
+                    <section className="card">
+                        <div className="skeleton" style={{ width: 90, height: 13, marginBottom: 8 }} />
+                        <div className="skeleton" style={{ width: '80%', height: 13, marginBottom: 16 }} />
+                        {[...Array(2)].map((_, i) => (
+                            <div key={i} className="campaign-assignment-card">
+                                <div className="skeleton" style={{ width: 150, height: 13, marginBottom: 6 }} />
+                                <div className="skeleton" style={{ width: '60%', height: 11, marginBottom: 4 }} />
+                                <div className="skeleton" style={{ width: '50%', height: 11 }} />
+                            </div>
+                        ))}
+                    </section>
+                </div>
+            </div>
+        </div>
+    )
     if (error) return <p className="error">{error}</p>
     if (!influencer) return <p>Influencer not found.</p>
 

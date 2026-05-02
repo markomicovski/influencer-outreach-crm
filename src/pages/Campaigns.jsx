@@ -249,7 +249,25 @@ function Campaigns() {
                 </div>
 
                 {loading ? (
-                    <p className="muted">Loading campaigns...</p>
+                    <div className="campaigns-grid">
+                        {[...Array(6)].map((_, i) => (
+                            <div key={i} className="campaign-grid-card">
+                                <div className="campaign-grid-card-title-row">
+                                    <div className="skeleton" style={{ width: '60%', height: 13 }} />
+                                    <div className="skeleton" style={{ width: 58, height: 20, borderRadius: 20 }} />
+                                </div>
+                                <div className="campaign-grid-card-meta">
+                                    <div className="skeleton" style={{ width: '75%', height: 11 }} />
+                                    <div className="skeleton" style={{ width: '50%', height: 11 }} />
+                                </div>
+                                <div className="campaign-grid-card-actions">
+                                    <div className="skeleton" style={{ width: 90, height: 28, borderRadius: 10 }} />
+                                    <div className="skeleton" style={{ width: 44, height: 28, borderRadius: 10 }} />
+                                    <div className="skeleton" style={{ width: 56, height: 28, borderRadius: 20 }} />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 ) : campaigns.length === 0 ? (
                     <p className="muted">
                         No campaigns yet. Click <strong>Create Campaign</strong> to get started.
