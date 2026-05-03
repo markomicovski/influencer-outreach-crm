@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { loginUser, registerUser } from '../services/authService'
 import { useAuth } from '../context/AuthContext'
+import { supabase } from '../services/supabaseClient'
 
 
 function Login() {
@@ -44,6 +45,31 @@ function Login() {
             navigate('/admin')
         } else {
             navigate('/dashboard')
+        }
+    }
+
+    async function handleForgotPassword() {
+        if (!email) {
+            setError('Enter your email first, then click forgot password.')
+            return
+        }
+
+        try {
+            setLoading(true)
+            setError('')
+
+            const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                redirectTo: `${window.location.origin}/reset-password`,
+            })
+
+            if (error) throw error
+
+            setError('Password reset email sent. Check your inbox.')
+        } catch (err) {
+            console.error(err)
+            setError(err.message || 'Could not send password reset email.')
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -149,6 +175,13 @@ function Login() {
                     {mode === 'login'
                         ? 'Need an account? Register here.'
                         : 'Already have an account? Log in.'}
+                </button>
+                <button
+                    type="button"
+                    className="link-button"
+                    onClick={handleForgotPassword}
+                >
+                    Forgot password?
                 </button>
             </div>
         </div>

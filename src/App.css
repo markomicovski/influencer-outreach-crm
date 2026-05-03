@@ -2040,6 +2040,82 @@ tbody td select:focus {
   .assign-form {
     grid-template-columns: 1fr;
   }
+
+  /* Sidebar becomes a single compact horizontal header bar */
+  .sidebar {
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  /* Compact brand for mobile header */
+  .sidebar-brand {
+    margin-bottom: 0;
+    flex-shrink: 0;
+    align-items: center;
+  }
+
+  .sidebar-brand-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .sidebar-brand-sub {
+    display: none;
+  }
+
+  .sidebar-brand-name {
+    font-size: 16px;
+    line-height: 1.2;
+  }
+
+  .sidebar-logo-img {
+    width: auto;
+    height: 28px;
+    margin-bottom: 0;
+  }
+
+  /* Touch-friendly tap targets (44px min) */
+  .primary-button,
+  .primary-link-button,
+  .secondary-button,
+  .secondary-link-button,
+  .secondary-action-button,
+  .compact-link-button,
+  .danger-button {
+    min-height: 44px;
+  }
+
+  .sidebar-nav-item {
+    display: flex;
+    align-items: center;
+    min-height: 40px;
+  }
+
+  /* Pipeline adjustments */
+  .pipeline-column {
+    min-height: 200px;
+  }
+
+  .pipeline-filter-select {
+    width: 100%;
+    min-width: unset;
+  }
+
+  /* Section header stacks on mobile */
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  /* Modal tighter padding on mobile */
+  .modal-overlay {
+    padding: 12px;
+  }
+
+  .modal {
+    padding: 20px;
+  }
 }
 
 @media (max-width: 540px) {
@@ -2050,10 +2126,69 @@ tbody td select:focus {
   .pipeline-stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  /* Tighter card padding */
+  .card {
+    padding: 16px;
+  }
+
+  .stat-card {
+    padding: 16px;
+  }
+
+  /* Snapshot board collapses to 1 column */
+  .snapshot-board {
+    grid-template-columns: 1fr;
+  }
+
+  /* List cards stack vertically */
+  .list-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .list-card-actions {
+    width: 100%;
+  }
+
+  /* Detail list: label stacks above value */
+  .detail-list > div {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .detail-list strong {
+    text-align: left;
+  }
+
+  /* Tighter main content padding */
+  .main-content {
+    padding: 14px 12px;
+  }
+
+  /* Dashboard actions stretch full width */
+  .dashboard-actions {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 24px 18px;
+  }
+
+  h1 {
+    font-size: 22px;
+  }
 }
 
 @media (max-width: 380px) {
   .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pipeline-stats-grid {
     grid-template-columns: 1fr;
   }
 }
