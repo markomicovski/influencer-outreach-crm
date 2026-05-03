@@ -149,7 +149,6 @@ function Login() {
                             <label>User Role</label>
                             <select value={role} onChange={(e) => setRole(e.target.value)}>
                                 <option value="BRAND_MANAGER">Brand Manager</option>
-                                <option value="ADMIN">System Admin</option>
                             </select>
                         </>
                     )}
